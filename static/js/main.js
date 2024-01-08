@@ -46,13 +46,16 @@ const sendMessage = () => {
         message: chatInputElement.value,
         name: chatName,
     }
-    chatSocket.send(JSON.stringify(data));
-    chatInputElement.value = '';
+    if (chatInputElement.value) {
+        chatSocket.send(JSON.stringify(data));
+        chatInputElement.value = '';
+    }
+
 }
 
 
 const onChatMessage = (data) => {
-    console.log(data);
+    console.log(data)
     if (data.type == "chat_message") {
         if (data.agent) {
             chatLogElement.innerHTML += `
@@ -78,7 +81,14 @@ const onChatMessage = (data) => {
                     <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300 text-center pt-2">${data.initials}</div>
                 </div>`;
         }
+    } else if (data.type == "user_update") {
+        chatLogElement.innerHTML += `
+        <p class="mt-2">
+            ${data.user} has joined the chat
+        </p>
+        `
     }
+    scrollBottom();
 }
 
 const joinChatRoom = async () => {
@@ -101,15 +111,22 @@ const joinChatRoom = async () => {
     chatSocket = new WebSocket(url);
 
     chatSocket.onmessage = (event) => {
-        console.log("On Message", event);
         onChatMessage(JSON.parse(event.data));
     }
     chatSocket.onopen = (event) => {
+        scrollBottom();
         console.log(`Chat Socket is opend ${event}`)
     }
     chatSocket.onclose = (event) => {
         console.log("Chat closed", event);
     }
+}
+
+const scrollBottom = () => {
+    chatLogElement.scrollTo({
+        top: chatLogElement.scrollHeight,
+        behavior: "smooth",
+    })
 }
 
 
@@ -122,6 +139,7 @@ chatOpenElement.addEventListener('click', () => {
 });
 
 
+
 chatJoinElement.addEventListener('click', () => {
     chatWelcomeElement.classList.add('hidden');
     chatRoomElement.classList.remove('hidden');
@@ -130,4 +148,11 @@ chatJoinElement.addEventListener('click', () => {
 
 chatSubmitElement.addEventListener('click', () => {
     sendMessage();
+})
+
+chatInputElement.addEventListener("keyup", (e) => {
+    console.log(e.KeyCode);
+    if (e.KeyCode == 13) {
+        sendMessage();
+    }
 })

@@ -19,7 +19,7 @@ class Message(models.Model):
 
 class Room(models.Model):
     CHOICES_STATUS = [
-        ('WAITING', 'Wating'),
+        ('WAITING', 'Waiting'),
         ('ACTIVE', 'Active'),
         ('CLOSED', 'Closed'),
     ]

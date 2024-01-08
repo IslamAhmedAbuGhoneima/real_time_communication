@@ -1,3 +1,4 @@
+{% if request.user.is_authenticated %}
 <div id="chat" class="max-w-[300px] fixed right-2 bottom-2 p-4 bg-white border border-gray-300 rounded-xl">
     <div id="chat_icon">
         <button id="chat_open" class="w-[50px] flex items-center">
@@ -22,3 +23,4 @@
         <button id="chat_message_submit" class="py-2 px-6 bg-rose-600 text-white rounded-xl">Send</button>
     </div>
 </div>
+{% endif %}
